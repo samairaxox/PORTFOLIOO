@@ -1,8 +1,47 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import DesktopExperience from "./Desktop";
 
-type Phase = "intro" | "exiting" | "home";
+type Phase = "intro" | "zooming" | "desktop" | "editorial";
+
+type GazePose = "center" | "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right";
+
+const gazePoses: GazePose[] = ["center", "left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right"];
+
+function CursorAvatar({ frozen }: { frozen: boolean }) {
+  const [pose, setPose] = useState<GazePose>("center");
+
+  useEffect(() => {
+    gazePoses.forEach((direction) => {
+      const image = new Image();
+      image.src = `/character-gaze/poses/${direction}.png`;
+    });
+
+  }, []);
+
+  useEffect(() => {
+    if (frozen) return;
+    const onPointerMove = (event: PointerEvent) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 2;
+      const y = (event.clientY / window.innerHeight - 0.5) * 2;
+      const horizontal = Math.abs(x) > 0.2 ? (x < 0 ? "left" : "right") : "";
+      const vertical = Math.abs(y) > 0.2 ? (y < 0 ? "up" : "down") : "";
+      const nextPose = (vertical && horizontal ? `${vertical}-${horizontal}` : vertical || horizontal || "center") as GazePose;
+      setPose((current) => current === nextPose ? current : nextPose);
+    };
+    const resetPose = () => setPose("center");
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerleave", resetPose);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", resetPose);
+    };
+  }, [frozen]);
+
+  return <img className="intro-character" src={`/character-gaze/poses/${pose}.png`} alt="Illustrated character with headphones looking toward the cursor, seated behind a heart-marked laptop" draggable={false} />;
+}
 
 const destinations = [
   { title: "About" },
@@ -50,11 +89,12 @@ function LampIllustration({ pull, sway, dragging }: { pull: number; sway: number
   );
 }
 
-function Intro({ onEnter }: { onEnter: () => void }) {
+function Intro({ onEnter, onSkip, zooming }: { onEnter: () => void; onSkip: () => void; zooming: boolean }) {
   const [pull, setPull] = useState(0);
   const [sway, setSway] = useState(0);
   const [lightOn, setLightOn] = useState(true);
   const [dragging, setDragging] = useState(false);
+  const [eyesFrozen, setEyesFrozen] = useState(false);
   const startY = useRef(0);
   const reducedMotion = useRef(false);
   const activated = useRef(false);
@@ -67,6 +107,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
   const activate = useCallback(() => {
     if (activated.current) return;
     activated.current = true;
+    setEyesFrozen(true);
     if (reducedMotion.current) { onEnter(); return; }
     setPull((current) => Math.max(current, 44));
     setSway(-1.5);
@@ -95,8 +136,15 @@ function Intro({ onEnter }: { onEnter: () => void }) {
   };
 
   return (
-    <section className="intro" aria-label="Interactive lamp introduction">
-      <button onClick={onEnter} className="skip-link">Skip intro <span>↗</span></button>
+    <section className={`intro ${zooming ? "intro--zooming" : ""}`} aria-label="Interactive lamp introduction">
+      <button onClick={onSkip} className="skip-link">Skip intro <span>↗</span></button>
+      <div className="character-light" aria-hidden="true" />
+      <div className="intro-avatar-position">
+        <div className="intro-avatar-zoom">
+          <CursorAvatar frozen={eyesFrozen} />
+          <span className="heart-portal" aria-hidden="true" />
+        </div>
+      </div>
       <div className={`lamp-stage ${lightOn ? "lamp-stage--lit" : "lamp-stage--off"}`}>
         <LampIllustration pull={pull} sway={sway} dragging={dragging} />
         <button className="chain-hitbox" aria-label="Pull the lamp chain to enter" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={() => { if (dragged.current) { dragged.current = false; return; } activate(); }}>
@@ -188,11 +236,18 @@ function Home() {
 
 export default function Page() {
   const [phase, setPhase] = useState<Phase>("intro");
-  const enter = useCallback(() => setPhase("exiting"), []);
+  const enter = useCallback(() => setPhase("zooming"), []);
+  const skip = useCallback(() => setPhase("desktop"), []);
   useEffect(() => {
-    if (phase !== "exiting") return;
-    const timeout = window.setTimeout(() => setPhase("home"), 460);
+    if (phase !== "zooming") return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timeout = window.setTimeout(() => setPhase("desktop"), reducedMotion ? 0 : 1550);
     return () => window.clearTimeout(timeout);
   }, [phase]);
-  return <><div className={`transition-shade ${phase === "exiting" ? "transition-shade--active" : ""}`} aria-hidden="true" />{phase !== "home" && <div className={`intro-wrap ${phase === "exiting" ? "intro-wrap--leaving" : ""}`}><Intro onEnter={enter} /></div>}{phase !== "intro" && <div className={`home-wrap ${phase === "home" ? "home-wrap--visible" : ""}`}><Home /></div>}</>;
+  const desktopVisible = phase === "zooming" || phase === "desktop";
+  return <>
+    {(phase === "intro" || phase === "zooming") && <div className={`intro-wrap ${phase === "zooming" ? "intro-wrap--zooming" : ""}`}><Intro onEnter={enter} onSkip={skip} zooming={phase === "zooming"} /></div>}
+    <DesktopExperience visible={desktopVisible} onOpenEditorial={() => setPhase("editorial")} />
+    {phase === "editorial" && <div className="editorial-experience"><button className="back-to-desktop" onClick={() => setPhase("desktop")}>← Back to desktop</button><Home /></div>}
+  </>;
 }

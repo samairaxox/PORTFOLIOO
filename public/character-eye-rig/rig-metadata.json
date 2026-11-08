@@ -1,0 +1,38 @@
+{
+  "image_size": [
+    1254,
+    1254
+  ],
+  "regions": {
+    "left": {
+      "box": [
+        510,
+        404,
+        585,
+        473
+      ],
+      "iris_center": [
+        546,
+        438
+      ]
+    },
+    "right": {
+      "box": [
+        631,
+        416,
+        722,
+        489
+      ],
+      "iris_center": [
+        677,
+        451
+      ]
+    }
+  },
+  "warnings": [
+    "Prototype, not visually approved: inpainting may create iris edge artifacts.",
+    "Use existing cleaned transparent portrait as base.",
+    "Do not move entire character or claim genuine 3D head tracking.",
+    "Eye overlays should be pixel-aligned and clipped to original eye geometry; verify in browser."
+  ]
+}
