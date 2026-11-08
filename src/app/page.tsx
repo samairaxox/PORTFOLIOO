@@ -62,28 +62,33 @@ function Masthead() {
 
 function LampIllustration({ pull, sway, dragging }: { pull: number; sway: number; dragging: boolean }) {
   return (
-    <svg className="lamp-art" viewBox="0 0 360 590" role="img" aria-label="A matte black pendant lamp with a pull chain">
+    <svg className="lamp-art" viewBox="0 0 360 590" role="img" aria-label="A dusty rose vintage pendant lamp with an interactive pull chain">
       <defs>
-        <linearGradient id="lampShell" x1="0" y1="0" x2="1" y2=".85"><stop stopColor="#41413d"/><stop offset=".22" stopColor="#242421"/><stop offset=".66" stopColor="#10100f"/><stop offset="1" stopColor="#050505"/></linearGradient>
-        <linearGradient id="lampRim" x1="0" x2="1"><stop stopColor="#68655d"/><stop offset=".35" stopColor="#252522"/><stop offset="1" stopColor="#080808"/></linearGradient>
-        <radialGradient id="bulbGlow"><stop stopColor="#ffd89a" stopOpacity=".96"/><stop offset=".28" stopColor="#e7a750" stopOpacity=".36"/><stop offset="1" stopColor="#cf8738" stopOpacity="0"/></radialGradient>
-        <filter id="softGlow" x="-100%" y="-20%" width="300%" height="180%"><feGaussianBlur stdDeviation="20"/></filter>
+        <linearGradient id="lampShell" x1="0" y1="0" x2="1" y2=".85"><stop stopColor="#b48687"/><stop offset=".16" stopColor="#906670"/><stop offset=".43" stopColor="#694956"/><stop offset=".72" stopColor="#493440"/><stop offset="1" stopColor="#30252f"/></linearGradient>
+        <linearGradient id="lampRim" x1="0" x2="1"><stop stopColor="#ddbd91"/><stop offset=".25" stopColor="#a67d59"/><stop offset=".54" stopColor="#745644"/><stop offset=".79" stopColor="#c7a274"/><stop offset="1" stopColor="#826149"/></linearGradient>
+        <linearGradient id="lampInner" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#fff0d3"/><stop offset=".42" stopColor="#e8c79f"/><stop offset="1" stopColor="#bd896f"/></linearGradient>
+        <linearGradient id="pullPearl" x1="0" y1="0" x2="1" y2=".2"><stop stopColor="#b99074"/><stop offset=".24" stopColor="#fff0d5"/><stop offset=".57" stopColor="#e7d0b6"/><stop offset=".82" stopColor="#fff2dc"/><stop offset="1" stopColor="#b28465"/></linearGradient>
+        <radialGradient id="bulbGlow"><stop stopColor="#fff1cf" stopOpacity=".94"/><stop offset=".3" stopColor="#f4c478" stopOpacity=".32"/><stop offset="1" stopColor="#dc9853" stopOpacity="0"/></radialGradient>
+        <filter id="softGlow" x="-130%" y="-70%" width="360%" height="260%"><feGaussianBlur stdDeviation="23"/></filter>
       </defs>
       <g className="lamp-sway" style={{ transform: `rotate(${sway}deg)`, transformOrigin: "300px 0" }}>
-        <path d="M300 -6v82" stroke="#252522" strokeWidth="3"/>
-        <path d="M297 -6v79" stroke="#5d5b55" strokeWidth=".8" opacity=".55"/>
+        <path d="M300 -6v82" stroke="#85664e" strokeWidth="3"/>
+        <path d="M297 -6v79" stroke="#e1c49c" strokeWidth=".8" opacity=".72"/>
         <path d="M272 72q28-13 56 0l-4 24q-24 12-48 0z" fill="url(#lampShell)"/>
         <path d="M205 89q67-26 135 0l17 52q-8 21-84 24t-85-24z" fill="url(#lampShell)"/>
-        <path d="M205 89q68-22 135 0" fill="none" stroke="#56554f" strokeWidth="1.5" opacity=".65"/>
+        <path className="lamp-shell-highlight" d="M211 95q63-23 123-1l13 42" fill="none" stroke="#e5bdac" strokeWidth="2" strokeLinecap="round" opacity=".58"/>
+        <path d="M205 89q68-22 135 0" fill="none" stroke="#d5b49a" strokeWidth="1.5" opacity=".76"/>
+        <path className="lamp-interior" d="M197 141q75 20 150 0-5 22-75 24t-75-24z" fill="url(#lampInner)"/>
         <path d="M190 139q82 22 164 0" fill="none" stroke="url(#lampRim)" strokeWidth="8" strokeLinecap="round"/>
-        <path d="M204 143q68 17 136 0" fill="none" stroke="#030303" strokeWidth="3" strokeLinecap="round"/>
-        <ellipse cx="272" cy="154" rx="31" ry="12" fill="url(#bulbGlow)" filter="url(#softGlow)"/>
-        <ellipse cx="272" cy="151" rx="8" ry="4" fill="#ffd89a"/>
-        <circle cx="272" cy="151" r="3" fill="#fff1d2"/>
-        <path d={`M272 153 Q${270 + pull * .18} 276 ${272 + pull * .12} ${397 + pull}`} fill="none" stroke="#a89c86" strokeWidth="1.2" style={{ transition: dragging ? "none" : "d 360ms cubic-bezier(.22,.75,.25,1)" }}/>
-        <path d={`M270.5 153 Q${268.5 + pull * .18} 276 ${270.5 + pull * .12} ${397 + pull}`} fill="none" stroke="#ece3d3" strokeWidth=".45" opacity=".82" style={{ transition: dragging ? "none" : "d 360ms cubic-bezier(.22,.75,.25,1)" }}/>
-        <path d={`M${272 + pull * .12} ${397 + pull}v18`} stroke="#b7ab95" strokeWidth="1.5"/>
-        <rect x={268 + pull * .12} y="413" width="8" height="18" rx="3" fill="url(#lampShell)" stroke="#827969" strokeWidth=".8" style={{ transform: `translateY(${pull}px)`, transition: dragging ? "none" : "transform 360ms cubic-bezier(.22,.75,.25,1)" }}/>
+        <path d="M204 143q68 17 136 0" fill="none" stroke="#62474a" strokeWidth="2" strokeLinecap="round" opacity=".72"/>
+        <path d="M199 145q73 18 146 0" fill="none" stroke="#f0d3aa" strokeWidth="1" strokeLinecap="round" opacity=".88"/>
+        <ellipse className="lamp-bloom" cx="272" cy="154" rx="31" ry="12" fill="url(#bulbGlow)" filter="url(#softGlow)"/>
+        <ellipse className="lamp-bulb" cx="272" cy="151" rx="8" ry="4" fill="#ffe0a4"/>
+        <circle className="lamp-bulb-core" cx="272" cy="151" r="3" fill="#fff5dc"/>
+        <path className="lamp-cord" d={`M272 153 Q${270 + pull * .18} 276 ${272 + pull * .12} ${397 + pull}`} fill="none" stroke="#c4a174" strokeWidth="1.25" style={{ transition: dragging ? "none" : "d 360ms cubic-bezier(.22,.75,.25,1)" }}/>
+        <path className="lamp-cord-highlight" d={`M270.5 153 Q${268.5 + pull * .18} 276 ${270.5 + pull * .12} ${397 + pull}`} fill="none" stroke="#fff0d2" strokeWidth=".45" opacity=".88" style={{ transition: dragging ? "none" : "d 360ms cubic-bezier(.22,.75,.25,1)" }}/>
+        <path d={`M${272 + pull * .12} ${397 + pull}v18`} stroke="#d7b88c" strokeWidth="1.6"/>
+        <rect className="lamp-handle" x={268 + pull * .12} y="413" width="8" height="18" rx="4" fill="url(#pullPearl)" stroke="#b88f66" strokeWidth=".9" style={{ transform: `translateY(${pull}px)`, transition: dragging ? "none" : "transform 360ms cubic-bezier(.22,.75,.25,1)" }}/>
       </g>
     </svg>
   );
@@ -137,6 +142,70 @@ function Intro({ onEnter, onSkip, zooming }: { onEnter: () => void; onSkip: () =
 
   return (
     <section className={`intro ${zooming ? "intro--zooming" : ""}`} aria-label="Interactive lamp introduction">
+      <div className="intro-room" aria-hidden="true">
+        <div className="intro-room__wall" />
+        <div className="intro-room__fairy-lights" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="intro-room__window">
+          <span className="intro-room__moon" />
+          <span className="intro-room__skyline" />
+          <span className="intro-room__rain intro-room__rain--one" />
+          <span className="intro-room__rain intro-room__rain--two" />
+          <span className="intro-room__rain intro-room__rain--three" />
+          <span className="intro-room__rain intro-room__rain--four" />
+          <span className="intro-room__city-light intro-room__city-light--one" />
+          <span className="intro-room__city-light intro-room__city-light--two" />
+          <span className="intro-room__city-light intro-room__city-light--three" />
+          <span className="intro-room__city-light intro-room__city-light--four" />
+          <span className="intro-room__window-cross intro-room__window-cross--vertical" />
+          <span className="intro-room__window-cross intro-room__window-cross--horizontal" />
+        </div>
+        <div className="intro-room__art"><span /><i /></div>
+        <div className="intro-room__right-shelf" aria-hidden="true">
+          <div className="intro-wall-shelf__objects">
+            <span className="intro-wall-shelf__books"><i /><i /><i /></span>
+            <svg className="intro-wall-shelf__bunny" viewBox="0 0 54 68" aria-hidden="true">
+              <defs>
+                <linearGradient id="bunny-ceramic" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stopColor="#fff0df" />
+                  <stop offset=".58" stopColor="#d9b5a9" />
+                  <stop offset="1" stopColor="#9c6d73" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="27" cy="59" rx="17" ry="5" fill="#1b1017" opacity=".34" />
+              <path d="M17 28C14 17 10 4 15 3c6-1 11 12 13 24M35 27C37 14 42 7 46 10c4 3-1 15-5 22" fill="url(#bunny-ceramic)" stroke="#8c6069" strokeWidth="1.5" />
+              <ellipse cx="27" cy="48" rx="19" ry="15" fill="url(#bunny-ceramic)" stroke="#8c6069" strokeWidth="1.5" />
+              <circle cx="27" cy="31" r="15" fill="url(#bunny-ceramic)" stroke="#8c6069" strokeWidth="1.5" />
+              <circle cx="22" cy="31" r="1.15" fill="#50353b" /><circle cx="32" cy="31" r="1.15" fill="#50353b" />
+              <path d="M25 35q2 2 4 0" fill="none" stroke="#9c586b" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M27 21c-5-6-10 0-5 4l5 3 5-3c5-4 0-10-5-4Z" fill="#bd7889" stroke="#f1d0c6" strokeWidth=".8" />
+              <circle cx="27" cy="24" r="1.5" fill="#f3d8c5" />
+            </svg>
+            <span className="intro-wall-shelf__vase">
+              <i className="intro-wall-shelf__stem intro-wall-shelf__stem--one" />
+              <i className="intro-wall-shelf__stem intro-wall-shelf__stem--two" />
+              <i className="intro-wall-shelf__stem intro-wall-shelf__stem--three" />
+              <i className="intro-wall-shelf__flower intro-wall-shelf__flower--one" />
+              <i className="intro-wall-shelf__flower intro-wall-shelf__flower--two" />
+              <i className="intro-wall-shelf__flower intro-wall-shelf__flower--three" />
+              <b />
+            </span>
+            <span className="intro-wall-shelf__trailing-plant"><i /><i /><b /></span>
+          </div>
+          <div className="intro-wall-shelf__plank" />
+        </div>
+        <div className="intro-room__shelf">
+          <span className="intro-room__book intro-room__book--one" />
+          <span className="intro-room__book intro-room__book--two" />
+          <span className="intro-room__book intro-room__book--three" />
+          <span className="intro-room__shelf-plant"><i /><i /><i /><b /></span>
+          <span className="intro-room__vase"><i /><i /><i /><b /></span>
+        </div>
+        <div className="intro-room__floor" />
+        <div className="intro-room__desk"><span className="intro-room__desk-light" /></div>
+        <span className="intro-room__screen-light" />
+      </div>
       <button onClick={onSkip} className="skip-link">Skip intro <span>↗</span></button>
       <div className="character-light" aria-hidden="true" />
       <div className="intro-avatar-position">
@@ -145,6 +214,7 @@ function Intro({ onEnter, onSkip, zooming }: { onEnter: () => void; onSkip: () =
           <span className="heart-portal" aria-hidden="true" />
         </div>
       </div>
+      <div className="intro-desk-lip" aria-hidden="true" />
       <div className={`lamp-stage ${lightOn ? "lamp-stage--lit" : "lamp-stage--off"}`}>
         <LampIllustration pull={pull} sway={sway} dragging={dragging} />
         <button className="chain-hitbox" aria-label="Pull the lamp chain to enter" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={() => { if (dragged.current) { dragged.current = false; return; } activate(); }}>
