@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=DM+Sans:wght@400;500;600&display=swap');
 @import "tailwindcss";
+@import "./professional.css";
 
 :root{--paper:#F7F5EF;--ink:#111110;--red:#B32025;--amber:#e6a44c;--display:"Bodoni Moda",Didot,"Times New Roman",serif;--sans:"DM Sans",Arial,Helvetica,sans-serif;--ease:cubic-bezier(.22,.75,.25,1)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit}

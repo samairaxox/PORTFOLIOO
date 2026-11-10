@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import DesktopExperience from "./Desktop";
+import ProfessionalPortfolio from "./ProfessionalPortfolio";
 
-type Phase = "intro" | "zooming" | "desktop" | "editorial";
+type Phase = "intro" | "zooming" | "desktop" | "professional";
 
 type GazePose = "center" | "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right";
 
@@ -42,24 +43,6 @@ function CursorAvatar({ frozen }: { frozen: boolean }) {
 
   return <img className="intro-character" src={`/character-gaze/poses/${pose}.png`} alt="Illustrated character with headphones looking toward the cursor, seated behind a heart-marked laptop" draggable={false} />;
 }
-
-const destinations = [
-  { title: "About" },
-  { title: "Work" },
-  { title: "Experience" },
-  { title: "Skills" },
-];
-
-function Masthead() {
-  return (
-    <div className="masthead">
-      <a className="masthead-brand" href="#home" aria-label="Samaira Sharma home">SS<span>.</span></a>
-      <span className="masthead-center">Independent practice in technology</span>
-      <a className="masthead-contact" href="#contents-title">Explore <span>↓</span></a>
-    </div>
-  );
-}
-
 function LampIllustration({ pull, sway, dragging }: { pull: number; sway: number; dragging: boolean }) {
   return (
     <svg className="lamp-art" viewBox="0 0 360 590" role="img" aria-label="A dusty rose vintage pendant lamp with an interactive pull chain">
@@ -255,55 +238,6 @@ function NavigationArt({ title, eye }: { title: string; eye: { x: number; y: num
   );
 }
 
-function Home() {
-  const [selected, setSelected] = useState<string | null>(null);
-  const [eye, setEye] = useState({ x: 0, y: 0 });
-  const [workHit, setWorkHit] = useState(-1);
-  return (
-    <main className="home" id="home">
-      <div className="page-shell">
-        <Masthead />
-        <section className="hero-editorial">
-          <div className="hero-overline">SOFTWARE ENGINEER <span>·</span> AI <span>·</span> FINTECH</div>
-          <h1 className="hero-name"><span className="hero-word hero-word--samaira">Samaira</span><span className="hero-word hero-word--sharma">Sharma</span></h1>
-          <div className="hero-bottom">
-            <p className="hero-caption">Software Engineer<br />exploring AI and FinTech</p>
-            <p className="hero-description">Building with curiosity, intention,<br className="desktop-break"/> and a point of view.</p>
-          </div>
-        </section>
-        <section className="contents-section" aria-labelledby="contents-title">
-          <div className="contents-heading"><h2 id="contents-title">Enter</h2><span className="contents-aside">Move through the work</span></div>
-          <nav className="destination-list" aria-label="Portfolio sections">
-            {destinations.map((item) => (
-              <a
-                className={`destination destination--${item.title.toLowerCase()} ${selected === item.title ? "destination--selected" : ""} ${item.title === "Work" && workHit >= 0 ? `work-hit-${workHit % 2 ? "b" : "a"}` : ""}`}
-                href={`#${item.title.toLowerCase()}`}
-                key={item.title}
-                aria-current={selected === item.title ? "true" : undefined}
-                onPointerMove={(event) => {
-                  if (item.title !== "About") return;
-                  const bounds = event.currentTarget.querySelector(".eyes-art")?.getBoundingClientRect();
-                  if (!bounds) return;
-                  const x = ((event.clientX - (bounds.left + bounds.width / 2)) / 62) * 10;
-                  const y = ((event.clientY - (bounds.top + bounds.height / 2)) / 43) * 5;
-                  setEye({ x: Math.max(-10, Math.min(10, x)), y: Math.max(-4.5, Math.min(4.5, y)) });
-                }}
-                onPointerLeave={() => item.title === "About" && setEye({ x: 0, y: 0 })}
-                onPointerEnter={() => item.title === "Work" && setWorkHit((hit) => hit + 1)}
-                onFocus={() => item.title === "Work" && setWorkHit((hit) => hit + 1)}
-                onClick={(event) => { event.preventDefault(); setSelected(item.title); if (item.title === "Work") setWorkHit((hit) => hit + 1); }}
-              >
-                <span className="destination-label"><span className="destination-title">{item.title}</span><NavigationArt title={item.title} eye={eye}/></span>
-              </a>
-            ))}
-          </nav>
-        </section>
-        <footer className="page-footer"><span>{selected ? `A closer look at ${selected}` : "A personal portfolio"}</span><span>Samaira Sharma</span></footer>
-      </div>
-    </main>
-  );
-}
-
 export default function Page() {
   const [phase, setPhase] = useState<Phase>("intro");
   const enter = useCallback(() => setPhase("zooming"), []);
@@ -317,7 +251,7 @@ export default function Page() {
   const desktopVisible = phase === "zooming" || phase === "desktop";
   return <>
     {(phase === "intro" || phase === "zooming") && <div className={`intro-wrap ${phase === "zooming" ? "intro-wrap--zooming" : ""}`}><Intro onEnter={enter} onSkip={skip} zooming={phase === "zooming"} /></div>}
-    <DesktopExperience visible={desktopVisible} onOpenEditorial={() => setPhase("editorial")} />
-    {phase === "editorial" && <div className="editorial-experience"><button className="back-to-desktop" onClick={() => setPhase("desktop")}>← Back to desktop</button><Home /></div>}
+    <DesktopExperience visible={desktopVisible} onOpenProfessional={() => setPhase("professional")} />
+    {phase === "professional" && <ProfessionalPortfolio onOpenInteractive={() => setPhase("desktop")} />}
   </>;
 }

@@ -550,7 +550,7 @@ function ContactView() {
   </div>;
 }
 
-function AppContent({ id, onOpenEditorial }: { id: AppId; onOpenEditorial: () => void }) {
+function AppContent({ id }: { id: AppId }) {
   if (id === "about") return <AboutView/>;
   if (id === "projects") return null;
   if (id === "experience") return <ExperienceTimeline/>;
@@ -559,7 +559,7 @@ function AppContent({ id, onOpenEditorial }: { id: AppId; onOpenEditorial: () =>
   return <ContactView/>;
 }
 
-export default function DesktopExperience({ visible, onOpenEditorial }: { visible: boolean; onOpenEditorial: () => void }) {
+export default function DesktopExperience({ visible, onOpenProfessional }: { visible: boolean; onOpenProfessional: () => void }) {
   const [windows, setWindows] = useState<OpenWindow[]>([]);
   const [clock, setClock] = useState<Date | null>(null);
   const [launchpadOpen, setLaunchpadOpen] = useState(false);
@@ -674,7 +674,7 @@ export default function DesktopExperience({ visible, onOpenEditorial }: { visibl
       <div className="desktop-wallpaper" aria-hidden="true" />
       <header className="desktop-menubar">
         <div className="desktop-menubar__identity"><span className="menubar-mark">S</span><strong>Samaira Sharma</strong><span className="menubar-divider"/><span>Portfolio</span></div>
-        <button className="menubar-editorial" onClick={onOpenEditorial}>Editorial portfolio <span>↗</span></button>
+        <button className="menubar-editorial" onClick={onOpenProfessional}>Professional View <span>↗</span></button>
         <div className="desktop-menubar__status"><span className="status-signal" aria-label="Signal"><i/><i/><i/></span><span className="status-battery" aria-label="Battery"><i/></span><time dateTime={clock?.toISOString()}>{clock ? `${clock.toLocaleDateString([], { month: "short", day: "numeric" })} · ${clock.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "—"}</time></div>
       </header>
 
@@ -738,12 +738,12 @@ export default function DesktopExperience({ visible, onOpenEditorial }: { visibl
         const app = apps.find((entry) => entry.id === item.id)!;
         return <section key={item.id} className={`os-window os-window--${item.id} ${item.minimized ? "os-window--minimized" : ""}`} style={{ zIndex: item.z, "--window-offset": `${Math.min(index, 3) * 18}px` } as React.CSSProperties} role="dialog" aria-label={`${app.title} window`} aria-hidden={item.minimized} onPointerDown={() => focusApp(item.id)}>
           <header className="os-window__bar"><div className="window-controls"><button className="window-control window-control--close" aria-label={`Close ${app.title}`} onClick={() => closeApp(item.id)} /><button className="window-control window-control--minimize" aria-label={`Minimize ${app.title}`} onClick={() => minimizeApp(item.id)} /><span className="window-control window-control--zoom" aria-hidden="true" /></div><span className="os-window__title">{app.title}</span>{["about", "achievements", "experience"].includes(item.id) ? <button className="os-window__close" type="button" aria-label={`Close ${app.title}`} onClick={() => closeApp(item.id)}>×</button> : <span className="os-window__bar-end">SS / 01</span>}</header>
-          <div className="os-window__content"><AppContent id={item.id} onOpenEditorial={onOpenEditorial}/></div>
+          <div className="os-window__content"><AppContent id={item.id}/></div>
         </section>;
       })}
 
       <nav className="desktop-dock" aria-label="Dock">
-        <button className="dock-item dock-item--editorial" onClick={onOpenEditorial} aria-label="Open editorial portfolio" title="Editorial portfolio"><span className="desktop-glyph"><AppGlyph id="editorial"/></span></button>
+        <button className="dock-item dock-item--editorial" onClick={onOpenProfessional} aria-label="Open professional portfolio" title="Professional View"><span className="desktop-glyph"><AppGlyph id="editorial"/></span></button>
         <span className="dock-separator" aria-hidden="true"/>
         {apps.map((app) => <button className={`dock-item ${app.id === "projects" ? (launchpadOpen || (feetcodeOpen && !feetcodeMinimized) ? "dock-item--open" : "") : windows.some((item) => item.id === app.id && !item.minimized) ? "dock-item--open" : ""}`} key={app.id} onClick={() => openApp(app.id)} aria-label={`Open ${app.title}`} title={app.title}><span className={`desktop-glyph desktop-glyph--${app.id}`}><AppGlyph id={app.id}/></span></button>)}
       </nav>
