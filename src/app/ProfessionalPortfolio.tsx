@@ -1,35 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-
-const semesters = [
-  { label: "01", score: 9.54 },
-  { label: "02", score: 9.64 },
-  { label: "03", score: 9.72 },
-  { label: "04", score: 10.0 },
-];
-
-const experience = [
-  { date: "SUMMER 2027", kind: "INCOMING", name: "JPMorgan Chase", role: "Software Engineering Intern", detail: "An upcoming internship. Details will be added after the role begins." },
-  { date: "MAY — JULY 2026", kind: "INTERNSHIP", name: "Investigen", role: "AI Intern", detail: "Mutual-fund data automation, SID/KIM compliance checking, and Scheme Information Document generation.", tags: ["Python", "Pandas", "PostgreSQL", "PDF processing"] },
-  { date: "MAY — AUGUST 2025", kind: "INTERNSHIP", name: "Orcawise", role: "Software Engineer Intern", detail: "Contributed to AI chatbot architecture and workflow design using LangChain and FAISS, alongside feature development and application integration.", tags: ["LangChain", "FAISS"] },
-  { date: "AUGUST 2025 — PRESENT", kind: "COMMUNITY", name: "CodeCell KJSCE", role: "Marketing Team Member", detail: "Co-hosted technical onboarding sessions for students and supported industry outreach." },
-  { date: "2025 — 2026", kind: "COMMUNITY", name: "Google Developer Groups", role: "Core Team Member", detail: "Co-hosted a Golang technical session and supported developer workshops." },
-];
-
-const achievements = [
-  { title: "Code for Good", result: "Runner-Up", detail: "JPMorgan Chase · Mumbai · 2026", image: "/assets/achievements/jpmorgan-code-for-good.png", alt: "Code for Good event materials and certificate" },
-  { title: "Finding the Next Signal", result: "Top 20 shortlisted", detail: "Investment Research Competition · 2026", image: "/assets/achievements/finding-the-next-signal.png", alt: "Finding the Next Signal competition poster" },
-  { title: "DataZen", result: "Finalist", detail: "Case Study Competition · 2026", image: "/assets/achievements/datazen-certificate.png", alt: "DataZen Certificate of Appreciation" },
-  { title: "NISM Series V-A", result: "Certified", detail: "Mutual Fund Distributors Certification" },
-];
-
-const skillGroups = [
-  { label: "LANGUAGES & DATA", items: ["Python", "TypeScript", "JavaScript", "SQL", "C++", "Pandas", "PostgreSQL"] },
-  { label: "AI & SEARCH", items: ["LangChain", "LangGraph", "FAISS", "HuggingFace"] },
-  { label: "PRODUCT ENGINEERING", items: ["React", "Next.js", "FastAPI", "Flask", "Tailwind CSS", "Electron"] },
-  { label: "PLATFORMS", items: ["MongoDB", "Firebase", "Git", "GitHub"] },
-];
+import { achievements, education, experience, semesters, skillGroups, unweightedSemesterAverage } from "./professional-data";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   useEffect(() => {
@@ -83,11 +55,11 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
         <div className="pro-about__story pro-reveal">
           <h2>Curiosity,<br/>made <em>useful.</em></h2>
           <div className="pro-copy-block"><p>I’m a B.Tech Information Technology student at K. J. Somaiya College of Engineering, Mumbai. I’m drawn to the point where intelligent systems meet practical, human-centered software.</p><p>I enjoy making complex ideas easier to use—whether that means automating a financial workflow, shaping an AI product, or refining the details of an interface.</p></div>
-          <div className="pro-education"><span>EDUCATION</span><strong>B.Tech, Information Technology</strong><p>K. J. Somaiya College of Engineering, Mumbai <i>·</i> Expected 2028</p></div>
+          <div className="pro-education"><span>EDUCATION</span><strong>{education.degree}</strong><p>{education.institution}, {education.location} <i>·</i> Expected {education.graduation}</p></div>
         </div>
         <div className="pro-academics pro-reveal">
           <div className="pro-academics__top"><span>ACADEMIC PERFORMANCE</span><span>01 — 04</span></div>
-          <div className="pro-academics__score"><strong>9.73</strong><span>/ 10</span></div>
+          <div className="pro-academics__score"><strong>{unweightedSemesterAverage}</strong><span>/ 10</span></div>
           <p className="pro-academics__caption">Unweighted average of four semester SGPAs</p>
           <div className="pro-semesters" aria-label="Semester SGPA scores">
             {semesters.map((term) => <div className={`pro-semester ${term.score === 10 ? "pro-semester--perfect" : ""}`} key={term.label}><span>SEM {term.label}</span><div className="pro-semester__track"><i style={{ width: `${term.score * 10}%` }}/></div><strong>{term.score.toFixed(2)}</strong></div>)}
@@ -127,7 +99,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">04</span><span>RECOGNITION</span><span className="pro-section-aside">MOMENTS THAT MARK THE WORK</span></div>
       <div className="pro-recognition__heading pro-reveal"><h2>Good work,<br/><em>noticed.</em></h2><p>Selected milestones from competitions, research, and continued learning.</p></div>
       <div className="pro-awards">
-        {achievements.map((item, index) => <article className="pro-award pro-reveal" key={item.title}><span className="pro-award__number">0{index + 1}</span><div className="pro-award__copy"><span>{item.detail}</span><h3>{item.title}</h3><p>{item.result}</p></div>{item.image && <img src={item.image} alt={item.alt} loading="lazy"/>}<span className="pro-award__arrow" aria-hidden="true">↗</span></article>)}
+        {achievements.map((item, index) => <article className="pro-award pro-reveal" key={item.title}><span className="pro-award__number">0{index + 1}</span><div className="pro-award__copy"><span>{[item.organization, item.period].filter(Boolean).join(" · ")}</span><h3>{item.title}</h3><p>{item.result}</p></div>{item.image && <img src={item.image} alt={item.imageAlt} loading="lazy"/>}<span className="pro-award__arrow" aria-hidden="true">↗</span></article>)}
       </div>
     </section>
 
