@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { education, experience, semesters, skillGroups, unweightedSemesterAverage, professionalLinks } from "./professional-data";
+import { education, semesters, skillGroups, unweightedSemesterAverage, professionalLinks } from "./professional-data";
 import ProfessionalProjects from "./ProfessionalProjects";
 import ProfessionalArchives from "./ProfessionalArchives";
+import ProfessionalExperience from "./ProfessionalExperience";
+import ProfessionalAchievements from "./ProfessionalAchievements";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   useEffect(() => {
@@ -37,9 +39,9 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
     <section className="pro-hero" aria-labelledby="pro-hero-title">
       <div className="pro-hero__copy">
         <p className="pro-eyebrow"><span className="pro-status-dot"/> SOFTWARE ENGINEER · MUMBAI, INDIA</p>
-        <h1 id="pro-hero-title">Samaira<br/><em>Sharma</em><span className="pro-period">.</span></h1>
+        <h1 id="pro-hero-title"><span className="pro-hero__line">SAMAIRA</span><span className="pro-hero__line pro-hero__line--second"><em>SHARMA</em><i>.</i></span></h1>
         <div className="pro-hero__bottom">
-          <p>Building useful software at the intersection of <strong>artificial intelligence</strong>, thoughtful engineering, and <strong>financial technology.</strong></p>
+          <p><strong>AI ENGINEERING / SOFTWARE DEVELOPMENT / FINTECH</strong><br/>Building useful software at the intersection of intelligent systems, thoughtful engineering, and financial technology.</p>
           <a className="pro-text-link" href="#work">Explore selected work <span>↓</span></a>
         </div>
       </div>
@@ -71,19 +73,11 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
       </div>
     </section>
 
-    <section className="pro-experience pro-section" id="experience">
-      <div className="pro-section-heading pro-reveal"><span className="pro-section-index">02</span><span>EXPERIENCE</span><span className="pro-section-aside">A RECORD OF LEARNING IN PRACTICE</span></div>
-      <div className="pro-experience__intro pro-reveal"><h2>Where ideas<br/>meet <em>execution.</em></h2><p>Internships, engineering, and the communities that make technology move forward.</p></div>
-      <div className="pro-timeline">
-        {experience.map((item, index) => <article className="pro-role pro-reveal" key={item.name}>
-          <span className="pro-role__index">0{index + 1}</span>
-          <div className="pro-role__main"><div className="pro-role__meta"><span>{item.date}</span><span>{item.kind}</span></div><h3>{item.name}</h3><p className="pro-role__title">{item.role}</p><p className="pro-role__detail">{item.detail}</p>{item.contributions.length > 0 && <ul className="pro-role__contributions">{item.contributions.map((contribution) => <li key={contribution}>{contribution}</li>)}</ul>}{item.tags && <div className="pro-tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>}</div>
-          <span className="pro-role__arrow" aria-hidden="true">↗</span>
-        </article>)}
-      </div>
-    </section>
+    <ProfessionalExperience />
 
     <ProfessionalArchives />
+
+    <ProfessionalAchievements />
 
     <ProfessionalProjects />
 
