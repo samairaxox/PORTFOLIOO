@@ -19,7 +19,7 @@ export default function ProfessionalProjects() {
 
   return <>
     <section className="pro-work pro-section" id="work" aria-labelledby="work-title">
-      <div className="pro-section-heading pro-reveal"><span className="pro-section-index">03</span><span>SELECTED WORK / COMPLETE INDEX</span><span className="pro-section-aside">FIVE PROJECTS &amp; RESEARCH PIECES</span></div>
+      <div className="pro-section-heading pro-reveal"><span className="pro-section-index">05</span><span>SELECTED WORK / COMPLETE INDEX</span><span className="pro-section-aside">FIVE PROJECTS &amp; RESEARCH PIECES</span></div>
       <div className="work-intro pro-reveal"><h2 id="work-title">Built to make<br/><em>something move.</em></h2><p>Products, research, and systems drawn from the résumé and portfolio record.</p></div>
       <div className="work-list">
         {projects.map((project) => <article className={`work-spread work-spread--${project.id} work-spread--${project.tone} pro-reveal`} key={project.id}>
