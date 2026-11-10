@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { achievements, education, experience, semesters, skillGroups, unweightedSemesterAverage } from "./professional-data";
+import ProfessionalProjects from "./ProfessionalProjects";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   useEffect(() => {
@@ -81,19 +82,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
       </div>
     </section>
 
-    <section className="pro-work pro-section" id="work">
-      <div className="pro-section-heading pro-reveal"><span className="pro-section-index">03</span><span>SELECTED WORK</span><span className="pro-section-aside">PRODUCT THINKING, BUILT WITH CODE</span></div>
-      <article className="pro-project pro-project--feetcode pro-reveal">
-        <div className="pro-project__visual" aria-label="FeetCode project preview illustration">
-          <div className="pro-code-window"><div className="pro-code-window__bar"><i/><i/><i/><span>FEETCODE / DEMO</span></div><div className="pro-code-window__body"><div className="pro-code-window__rail"><span>OVERVIEW</span><span>CHALLENGES</span><span>PROGRESS</span></div><div className="pro-code-window__content"><span className="pro-code-window__kicker">WEEKLY PRACTICE</span><strong>Stay in the<br/>solving habit.</strong><div className="pro-code-window__progress"><i/><i/><i/><i/><i/><i/><i/></div><span className="pro-code-window__caption">GOALS · CHALLENGES · PROGRESS</span></div></div></div>
-          <span className="pro-project__visual-index">PROJECT / 01</span>
-        </div>
-        <div className="pro-project__copy"><div className="pro-project__meta"><span>01 / FULL-STACK PRODUCT</span><span>ACCOUNTABILITY × CODE</span></div><h3>FeetCode<span>.</span></h3><p>A competitive-programming accountability platform built around weekly goals, challenge participation, stake-based motivation, and progress tracking.</p><div className="pro-project__stack"><span>Next.js</span><span>TypeScript</span><span>Tailwind CSS</span><span>Express.js</span><span>MongoDB</span><span>Firebase Auth</span><span>Electron</span></div><div className="pro-project__links"><a href="https://feetcode-portfolio-demo.vercel.app/demo" target="_blank" rel="noreferrer">Live demo <span>↗</span></a><a href="https://feetcode.vercel.app/home" target="_blank" rel="noreferrer">Original website <span>↗</span></a></div></div>
-      </article>
-      <article className="pro-project pro-project--beneficiary pro-reveal">
-        <div className="pro-project__copy"><div className="pro-project__meta"><span>02 / TEAM PROJECT</span><span>CODE FOR GOOD · 2026</span></div><h3>Beneficiary<br/>operations<span>.</span></h3><p>A team-built platform for ISRA designed to simplify access to support schemes, with guided onboarding, OTP authentication, eligibility checks, document handling, and application workflows.</p><div className="pro-project__stack"><span>Guided onboarding</span><span>OTP authentication</span><span>Eligibility workflows</span></div><p className="pro-project__footnote">Developed with a team at JPMorgan Chase Code for Good, Mumbai.</p></div><figure className="pro-project__proof"><img src="/assets/achievements/jpmorgan-code-for-good.png" alt="Event materials from JPMorgan Chase Code for Good"/><figcaption>BUILDING FOR GOOD <span>↗</span></figcaption></figure>
-      </article>
-    </section>
+    <ProfessionalProjects />
 
     <section className="pro-recognition pro-section" id="achievements">
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">04</span><span>RECOGNITION</span><span className="pro-section-aside">MOMENTS THAT MARK THE WORK</span></div>
