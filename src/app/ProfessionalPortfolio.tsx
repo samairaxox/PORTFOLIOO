@@ -1,17 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { education, semesters, unweightedSemesterAverage, professionalLinks } from "./professional-data";
 import ProfessionalProjects from "./ProfessionalProjects";
 import ProfessionalArchives from "./ProfessionalArchives";
 import ProfessionalExperience from "./ProfessionalExperience";
 import ProfessionalAchievements from "./ProfessionalAchievements";
 import ProfessionalSkills from "./ProfessionalSkills";
+import ProfessionalCommandPalette, { type PortfolioCommand } from "./ProfessionalCommandPalette";
+import ProfessionalContactCard from "./ProfessionalContactCard";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
-  const [emailCopied, setEmailCopied] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [edition, setEdition] = useState<"morning" | "midnight">("morning");
+  const commandTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const commandItems: PortfolioCommand[] = [
+    { label: "FeetCode", detail: "Featured project · case study", href: "#work", action: "feetcode" },
+    { label: "Experience", detail: "Career journey · field notes", href: "#experience" },
+    { label: "Achievements", detail: "Recognition · archive", href: "#achievements" },
+    { label: "Résumé", detail: "Open the PDF résumé", href: professionalLinks.resume, external: true },
+    { label: "GitHub", detail: "github.com/samairaxox", href: professionalLinks.github, external: true },
+    { label: "Contact", detail: "Email · LinkedIn · GitHub", href: "#contact" },
+  ];
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("portfolio-edition");
+      if (saved === "morning" || saved === "midnight") setEdition(saved);
+    } catch { /* Storage can be unavailable in private browsing. */ }
+  }, []);
+
+  useEffect(() => {
+    const onShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, []);
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>(".pro-reveal");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -45,21 +76,43 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
   }, []);
 
   const copyEmail = async () => {
-    try { await navigator.clipboard.writeText(professionalLinks.email); setEmailCopied(true); window.setTimeout(() => setEmailCopied(false), 1800); }
-    catch { window.location.href = `mailto:${professionalLinks.email}`; }
+    try { await navigator.clipboard.writeText(professionalLinks.email); return true; }
+    catch { window.location.href = `mailto:${professionalLinks.email}`; return false; }
   };
 
   const closeMenu = () => setMenuOpen(false);
 
-  return <main className="professional-site" id="professional-top">
+  const changeEdition = () => {
+    const next = edition === "morning" ? "midnight" : "morning";
+    try { window.localStorage.setItem("portfolio-edition", next); } catch { /* Keep this session usable without storage. */ }
+    setEdition(next);
+  };
+
+  const openFeetcode = () => {
+    document.querySelector("#work")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => window.dispatchEvent(new Event("portfolio:open-feetcode")), 360);
+  };
+
+  const closeCommandPalette = () => {
+    setCommandOpen(false);
+    window.requestAnimationFrame(() => commandTriggerRef.current?.focus());
+  };
+
+  return <main className="professional-site" id="professional-top" data-edition={edition}>
     <header className="pro-nav">
       <a className="pro-wordmark" href="#professional-top" aria-label="Samaira Sharma, home">S<span>/</span>S</a>
       <button className="pro-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="professional-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? "CLOSE" : "MENU"}<span aria-hidden="true">{menuOpen ? "−" : "+"}</span></button>
       <nav id="professional-navigation" className={menuOpen ? "is-open" : ""} aria-label="Professional portfolio sections">
         <a aria-current={activeSection === "about" ? "location" : undefined} href="#about" onClick={closeMenu}>About</a><a aria-current={activeSection === "experience" ? "location" : undefined} href="#experience" onClick={closeMenu}>Experience</a><a aria-current={activeSection === "journal" ? "location" : undefined} href="#journal" onClick={closeMenu}>Journal</a><a aria-current={activeSection === "work" ? "location" : undefined} href="#work" onClick={closeMenu}>Work</a><a aria-current={activeSection === "achievements" ? "location" : undefined} href="#achievements" onClick={closeMenu}>Recognition</a><a aria-current={activeSection === "skills" ? "location" : undefined} href="#skills" onClick={closeMenu}>Skills</a><a aria-current={activeSection === "contact" ? "location" : undefined} href="#contact" onClick={closeMenu}>Contact</a>
       </nav>
-      <button className="pro-interactive-link" type="button" onClick={onOpenInteractive}>Interactive View <span aria-hidden="true">↗</span></button>
+      <div className="pro-nav__actions">
+        <button className="pro-edition-toggle" type="button" aria-label={`Switch to ${edition === "morning" ? "Midnight" : "Morning"} Edition`} aria-pressed={edition === "midnight"} onClick={changeEdition}><span aria-hidden="true">{edition === "morning" ? "☼" : "☾"}</span><b>{edition === "morning" ? "MORNING" : "MIDNIGHT"}</b></button>
+        <button ref={commandTriggerRef} className="pro-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-haspopup="dialog" aria-expanded={commandOpen}><span>INDEX</span><kbd>⌘ K</kbd></button>
+        <button className="pro-interactive-link" type="button" onClick={onOpenInteractive}>Interactive View <span aria-hidden="true">↗</span></button>
+      </div>
     </header>
+
+    <ProfessionalCommandPalette open={commandOpen} onClose={closeCommandPalette} items={commandItems} onFeetcode={openFeetcode}/>
 
     <section className="pro-hero" aria-labelledby="pro-hero-title">
       <div className="pro-hero__copy">
@@ -120,7 +173,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
 
     <footer className="pro-contact" id="contact">
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">07</span><span>CONTACT</span></div>
-      <div className="pro-contact__main pro-reveal"><p>HAVE A THOUGHTFUL PROBLEM?</p><h2>Let’s make<br/><em>it matter.</em></h2><a className="pro-contact__email" href={`mailto:${professionalLinks.email}`}>{professionalLinks.email} <span>↗</span></a><button className="pro-copy-email" type="button" onClick={copyEmail}>{emailCopied ? "Email copied ✓" : "Copy email ↗"}</button><a className="pro-resume-link" href={professionalLinks.resume} download>Download résumé (PDF) <span>↓</span></a></div>
+      <div className="pro-contact__main pro-reveal"><p>HAVE A THOUGHTFUL PROBLEM?</p><h2>Let’s make<br/><em>it matter.</em></h2><ProfessionalContactCard email={professionalLinks.email} github={professionalLinks.github} linkedin={professionalLinks.linkedin} resume={professionalLinks.resume} onCopyEmail={copyEmail}/></div>
       <div className="pro-contact__bottom"><span>Samaira Sharma · Software Engineer</span><div><a href={professionalLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={professionalLinks.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={professionalLinks.resume} target="_blank" rel="noreferrer">Résumé ↗</a><button type="button" onClick={onOpenInteractive}>Interactive View ↗</button></div><a href="#professional-top">Back to top ↑</a></div>
     </footer>
   </main>;

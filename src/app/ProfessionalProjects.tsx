@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { projects, type ProjectRecord } from "./professional-data";
+import FeetCodeBlueprint from "./FeetCodeBlueprint";
 
 export default function ProfessionalProjects() {
   const featuredProject = projects.find((project) => project.id === "feetcode")!;
@@ -15,6 +16,12 @@ export default function ProfessionalProjects() {
   useEffect(() => {
     setEmbedAuthorized(window.location.origin === demoOrigin);
   }, [demoOrigin]);
+
+  useEffect(() => {
+    const openFeetcodeStory = () => setSelected(featuredProject);
+    window.addEventListener("portfolio:open-feetcode", openFeetcodeStory);
+    return () => window.removeEventListener("portfolio:open-feetcode", openFeetcodeStory);
+  }, [featuredProject]);
 
   useEffect(() => {
     if (!selected) return;
@@ -67,6 +74,7 @@ export default function ProfessionalProjects() {
             {embedAuthorized ? <iframe title="Interactive FeetCode live demo" src="https://feetcode-portfolio-demo.vercel.app/demo" allow="clipboard-read; clipboard-write"/> : <div className="work-live-demo__fallback"><div className="work-live-demo__statement"><span>THE LIVE PRODUCT</span><strong>Make consistency<br/>a shared habit.</strong><i>GOALS&nbsp; · &nbsp;CHALLENGES&nbsp; · &nbsp;PROGRESS</i></div><div><p>The live FeetCode demo is not authorized to embed on this portfolio origin. Open the deployed app to explore the real interactive experience.</p><a href="https://feetcode-portfolio-demo.vercel.app/demo" target="_blank" rel="noreferrer">Launch Live Demo ↗</a></div></div>}
             <a className="work-live-demo__original" href="https://feetcode.vercel.app/home" target="_blank" rel="noreferrer">Original FeetCode website ↗</a>
           </section>}
+          {selected.id === "feetcode" && <FeetCodeBlueprint/>}
           {selected.image && <figure className="work-dialog__image"><img src={selected.image} alt={selected.imageAlt ?? ""}/>{selected.imageCaption && <figcaption>{selected.imageCaption}</figcaption>}</figure>}
           {selected.id === "feetcode" && <div className="work-case-tabs" role="tablist" aria-label="FeetCode case study panels">{(["overview", "approach", "stack"] as const).map((panel) => <button key={panel} type="button" role="tab" aria-selected={activePanel === panel} onClick={() => setActivePanel(panel)}>{panel}</button>)}</div>}
           <div className="work-dialog__columns">
