@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { education, semesters, skillGroups, unweightedSemesterAverage, professionalLinks } from "./professional-data";
+import { education, semesters, unweightedSemesterAverage, professionalLinks } from "./professional-data";
 import ProfessionalProjects from "./ProfessionalProjects";
 import ProfessionalArchives from "./ProfessionalArchives";
 import ProfessionalExperience from "./ProfessionalExperience";
 import ProfessionalAchievements from "./ProfessionalAchievements";
+import ProfessionalSkills from "./ProfessionalSkills";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   useEffect(() => {
@@ -65,9 +66,19 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
           <div className="pro-academics__top"><span>ACADEMIC PERFORMANCE</span><span>01 — 04</span></div>
           <div className="pro-academics__score"><strong>{unweightedSemesterAverage}</strong><span>/ 10</span></div>
           <p className="pro-academics__caption">Unweighted average of four semester SGPAs</p>
-          <div className="pro-semesters" aria-label="Semester SGPA scores">
-            {semesters.map((term) => <div className={`pro-semester ${term.score === 10 ? "pro-semester--perfect" : ""}`} key={term.label}><span>SEM {term.label}</span><div className="pro-semester__track"><i style={{ width: `${term.score * 10}%` }}/></div><strong>{term.score.toFixed(2)}</strong></div>)}
-          </div>
+          <svg className="pro-semester-chart" viewBox="0 0 500 148" role="img" aria-label={`Semester SGPA scores: ${semesters.map((term) => `semester ${term.label}, ${term.score.toFixed(2)}`).join("; ")}`}>
+            <path className="pro-semester-chart__guide" d="M25 112H475M25 67H475M25 22H475"/>
+            <polyline className="pro-semester-chart__line" points={semesters.map((term, index) => `${35 + index * 143},${112 - ((term.score - 9.4) / 0.6) * 78}`).join(" ")}/>
+            {semesters.map((term, index) => {
+              const x = 35 + index * 143;
+              const y = 112 - ((term.score - 9.4) / 0.6) * 78;
+              return <g className={term.score === 10 ? "pro-semester-chart__point pro-semester-chart__point--perfect" : "pro-semester-chart__point"} key={term.label}>
+                <circle cx={x} cy={y} r={term.score === 10 ? 6 : 4}/>
+                <text className="pro-semester-chart__score" x={x} y={y - 13} textAnchor="middle">{term.score.toFixed(2)}</text>
+                <text className="pro-semester-chart__term" x={x} y="142" textAnchor="middle">SEM {term.label}</text>
+              </g>;
+            })}
+          </svg>
           <p className="pro-academics__note"><span>10.00 SGPA</span> — Semester 4</p>
         </div>
       </div>
@@ -81,10 +92,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
 
     <ProfessionalProjects />
 
-    <section className="pro-skills pro-section" id="skills">
-      <div className="pro-section-heading pro-reveal"><span className="pro-section-index">06</span><span>TOOLS &amp; METHODS</span></div>
-      <div className="pro-skills__layout"><h2 className="pro-reveal">A toolkit for<br/><em>making things.</em></h2><div className="pro-skill-groups">{skillGroups.map((group) => <div className="pro-skill-group pro-reveal" key={group.label}><span>{group.label}</span><div>{group.items.map((skill) => <i key={skill}>{skill}</i>)}</div></div>)}</div></div>
-    </section>
+    <ProfessionalSkills />
 
     <footer className="pro-contact" id="contact">
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">07</span><span>CONTACT</span></div>
