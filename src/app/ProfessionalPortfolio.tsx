@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { education, semesters, unweightedSemesterAverage, professionalLinks } from "./professional-data";
 import ProfessionalProjects from "./ProfessionalProjects";
 import ProfessionalArchives from "./ProfessionalArchives";
@@ -9,6 +9,9 @@ import ProfessionalAchievements from "./ProfessionalAchievements";
 import ProfessionalSkills from "./ProfessionalSkills";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("about");
+  const [emailCopied, setEmailCopied] = useState(false);
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>(".pro-reveal");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -28,11 +31,32 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(".professional-site");
+    const sections = Array.from(document.querySelectorAll<HTMLElement>(".professional-site [id]"))
+      .filter((node) => ["about", "experience", "journal", "achievements", "work", "skills", "contact"].includes(node.id));
+    if (!root || !("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveSection(visible.target.id);
+    }, { root, rootMargin: "-18% 0px -58% 0px", threshold: [0, .2, .5, .8] });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  const copyEmail = async () => {
+    try { await navigator.clipboard.writeText(professionalLinks.email); setEmailCopied(true); window.setTimeout(() => setEmailCopied(false), 1800); }
+    catch { window.location.href = `mailto:${professionalLinks.email}`; }
+  };
+
+  const closeMenu = () => setMenuOpen(false);
+
   return <main className="professional-site" id="professional-top">
     <header className="pro-nav">
       <a className="pro-wordmark" href="#professional-top" aria-label="Samaira Sharma, home">S<span>/</span>S</a>
-      <nav aria-label="Professional portfolio sections">
-        <a href="#about">About</a><a href="#experience">Experience</a><a href="#journal">Journal</a><a href="#work">Work</a><a href="#achievements">Recognition</a><a href="#skills">Skills</a><a href="#contact">Contact</a>
+      <button className="pro-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="professional-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? "CLOSE" : "MENU"}<span aria-hidden="true">{menuOpen ? "−" : "+"}</span></button>
+      <nav id="professional-navigation" className={menuOpen ? "is-open" : ""} aria-label="Professional portfolio sections">
+        <a aria-current={activeSection === "about" ? "location" : undefined} href="#about" onClick={closeMenu}>About</a><a aria-current={activeSection === "experience" ? "location" : undefined} href="#experience" onClick={closeMenu}>Experience</a><a aria-current={activeSection === "journal" ? "location" : undefined} href="#journal" onClick={closeMenu}>Journal</a><a aria-current={activeSection === "work" ? "location" : undefined} href="#work" onClick={closeMenu}>Work</a><a aria-current={activeSection === "achievements" ? "location" : undefined} href="#achievements" onClick={closeMenu}>Recognition</a><a aria-current={activeSection === "skills" ? "location" : undefined} href="#skills" onClick={closeMenu}>Skills</a><a aria-current={activeSection === "contact" ? "location" : undefined} href="#contact" onClick={closeMenu}>Contact</a>
       </nav>
       <button className="pro-interactive-link" type="button" onClick={onOpenInteractive}>Interactive View <span aria-hidden="true">↗</span></button>
     </header>
@@ -96,7 +120,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
 
     <footer className="pro-contact" id="contact">
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">07</span><span>CONTACT</span></div>
-      <div className="pro-contact__main pro-reveal"><p>HAVE A THOUGHTFUL PROBLEM?</p><h2>Let’s make<br/><em>it matter.</em></h2><a className="pro-contact__email" href={`mailto:${professionalLinks.email}`}>{professionalLinks.email} <span>↗</span></a><a className="pro-resume-link" href={professionalLinks.resume} target="_blank" rel="noreferrer">Read résumé (PDF) <span>↗</span></a></div>
+      <div className="pro-contact__main pro-reveal"><p>HAVE A THOUGHTFUL PROBLEM?</p><h2>Let’s make<br/><em>it matter.</em></h2><a className="pro-contact__email" href={`mailto:${professionalLinks.email}`}>{professionalLinks.email} <span>↗</span></a><button className="pro-copy-email" type="button" onClick={copyEmail}>{emailCopied ? "Email copied ✓" : "Copy email ↗"}</button><a className="pro-resume-link" href={professionalLinks.resume} download>Download résumé (PDF) <span>↓</span></a></div>
       <div className="pro-contact__bottom"><span>Samaira Sharma · Software Engineer</span><div><a href={professionalLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={professionalLinks.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={professionalLinks.resume} target="_blank" rel="noreferrer">Résumé ↗</a><button type="button" onClick={onOpenInteractive}>Interactive View ↗</button></div><a href="#professional-top">Back to top ↑</a></div>
     </footer>
   </main>;
