@@ -9,12 +9,15 @@ import ProfessionalAchievements from "./ProfessionalAchievements";
 import ProfessionalSkills from "./ProfessionalSkills";
 import ProfessionalCommandPalette, { type PortfolioCommand } from "./ProfessionalCommandPalette";
 import ProfessionalContactCard from "./ProfessionalContactCard";
+import ProfessionalMascot from "./ProfessionalMascot";
 
 export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInteractive: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
   const [commandOpen, setCommandOpen] = useState(false);
   const [edition, setEdition] = useState<"morning" | "midnight">("morning");
+  const [starClicks, setStarClicks] = useState(0);
+  const [starNoteOpen, setStarNoteOpen] = useState(false);
   const commandTriggerRef = useRef<HTMLButtonElement>(null);
 
   const commandItems: PortfolioCommand[] = [
@@ -117,16 +120,23 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
     <section className="pro-hero" aria-labelledby="pro-hero-title">
       <div className="pro-hero__copy">
         <p className="pro-eyebrow"><span className="pro-status-dot"/> SOFTWARE ENGINEER · MUMBAI, INDIA</p>
-        <h1 id="pro-hero-title"><span className="pro-hero__line">SAMAIRA</span><span className="pro-hero__line pro-hero__line--second"><em>SHARMA</em><i>.</i></span></h1>
+        <button className={`pro-hero__star${starNoteOpen ? " is-open" : ""}`} type="button" aria-label="Open a small portfolio note" aria-expanded={starNoteOpen} onClick={() => { setStarClicks((count) => count + 1); setStarNoteOpen((open) => !open); }}>
+          <svg style={{ transform: `rotate(${starClicks * 144}deg)` }} viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2 3.2 9.2L29 16l-9.8 3.1L16 29l-3.2-9.9L3 16l9.8-4.8L16 2Z"/><circle cx="16" cy="16" r="2.1"/></svg>
+          <span className="pro-hero__star-note" aria-live="polite">A little margin for curiosity.</span>
+          {starClicks > 0 && <span key={starClicks} className="pro-hero__star-burst" aria-hidden="true">✳</span>}
+        </button>
+        <h1 id="pro-hero-title"><span className="pro-hero__line">SAMAIRA</span><span className="pro-hero__line pro-hero__line--second" tabIndex={0} data-annotation="a name, still becoming"><em>SHARMA</em><i>.</i></span><svg className="pro-hero__scribble" viewBox="0 0 260 22" aria-hidden="true"><path d="M3 14C62 5 97 19 145 9s78-6 112-8"/></svg></h1>
         <div className="pro-hero__bottom">
           <p><strong>AI ENGINEERING / SOFTWARE DEVELOPMENT / FINTECH</strong><br/>Building useful software at the intersection of intelligent systems, thoughtful engineering, and financial technology.</p>
-          <a className="pro-text-link" href="#work">Explore selected work <span>↓</span></a>
+          <a className="pro-text-link" href="#work">Explore selected work <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <figure className="pro-hero__portrait">
         <img src="/assets/about/personal-portrait.png" alt="Samaira in a colorful immersive light installation" />
         <figcaption><span>01 / PERSONAL ARCHIVE</span><span>CURIOUS BY DESIGN</span></figcaption>
+        <span className="pro-portrait-note" aria-hidden="true">A MOMENT IN COLOR</span>
         <span className="pro-portrait-index" aria-hidden="true">SS—26</span>
+        <ProfessionalMascot />
       </figure>
       <div className="pro-hero__coordinates" aria-hidden="true"><span>19°04′ N</span><i/><span>72°52′ E</span></div>
     </section>
