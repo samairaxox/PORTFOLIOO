@@ -10,7 +10,9 @@ export default function ProfessionalProjects() {
   const [embedAuthorized, setEmbedAuthorized] = useState(false);
   const [activePanel, setActivePanel] = useState<"overview" | "approach" | "stack">("overview");
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [workArrived, setWorkArrived] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const workRef = useRef<HTMLElement>(null);
   const [demoOrigin] = useState("https://budget-pueblo-hamburger.ngrok-free.dev");
 
   useEffect(() => {
@@ -24,6 +26,25 @@ export default function ProfessionalProjects() {
   }, [featuredProject]);
 
   useEffect(() => {
+    const section = workRef.current;
+    const heading = section?.querySelector<HTMLElement>(".work-intro");
+    if (!section || !heading) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      setWorkArrived(true);
+      return;
+    }
+    const scroller = section.closest<HTMLElement>(".professional-site");
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setWorkArrived(true);
+      observer.disconnect();
+    }, { root: scroller, threshold: .2 });
+    observer.observe(heading);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!selected) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setSelected(null);
@@ -34,9 +55,9 @@ export default function ProfessionalProjects() {
   }, [selected]);
 
   return <>
-    <section className="pro-work pro-section" id="work" aria-labelledby="work-title">
+    <section className="pro-work pro-section" id="work" aria-labelledby="work-title" ref={workRef}>
       <div className="pro-section-heading pro-reveal"><span className="pro-section-index">05</span><span>ONE FEATURED PROJECT / FULL-STACK</span><span className="pro-section-aside">INTERACTIVE CASE STUDY</span></div>
-      <div className="work-intro pro-reveal"><h2 id="work-title">Consistency,<br/><em>engineered.</em></h2><p>A closer look at FeetCode: an accountability platform for building a steadier coding practice.</p></div>
+      <div className="work-intro pro-reveal"><h2 id="work-title">Consistency,<br/><em>engineered.</em><span className={`work-hammer${workArrived ? " is-striking" : ""}`} aria-hidden="true"><svg viewBox="0 0 72 72"><path className="work-hammer__impact" d="M17 5v8M6 16l7 4M28 12l-3 7"/><path className="work-hammer__handle" d="m43 23-6 6 18 27 6-6z"/><path className="work-hammer__head" d="m30 14 28 4 6 8-6 7-27-7-8 5-8-8 8-9z"/></svg></span></h2><p>A closer look at FeetCode: an accountability platform for building a steadier coding practice.</p></div>
       <div className="work-list work-list--featured">
         {[featuredProject].map((project) => <article className={`work-spread work-spread--${project.id} work-spread--${project.tone} pro-reveal`} key={project.id}>
           <button className="work-art" type="button" onClick={() => setSelected(project)} aria-label={`Read the ${project.name} case study`}>
