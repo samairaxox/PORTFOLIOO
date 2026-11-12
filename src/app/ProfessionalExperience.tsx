@@ -61,12 +61,13 @@ export default function ProfessionalExperience() {
     <div className="pro-experience__intro pro-reveal"><h2 id="experience-title">A career in<br/><em>the making.</em></h2><p>Five chapters across engineering, finance, and developer community. Select a milestone to explore.</p></div>
     <div className="pro-journey" style={{"--journey-progress": `${progress * 100}%`} as React.CSSProperties}>
       <div className="pro-journey__rail" role="tablist" aria-label="Experience milestones" aria-orientation="vertical">
+        <span className="pro-journey__cursor" aria-hidden="true" style={{ top: `${10 + (experience.length > 1 ? active / (experience.length - 1) * 80 : 0)}%` }}/>
         {experience.map((entry, index) => <button key={entry.name} role="tab" id={`journey-tab-${index}`} aria-selected={active === index} aria-controls="journey-panel" className={`pro-journey__stop ${active === index ? "is-active" : ""}`} onClick={() => choose(index, true)} onKeyDown={(event) => {
           if (!["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
           event.preventDefault();
           const next = event.key === "Home" ? 0 : event.key === "End" ? experience.length - 1 : Math.max(0, Math.min(experience.length - 1, active + (event.key === "ArrowDown" ? 1 : -1)));
           choose(next, true); document.getElementById(`journey-tab-${next}`)?.focus();
-        }}><span className="pro-journey__number">{String(index + 1).padStart(2, "0")}</span><span className="pro-journey__stop-copy"><small>{entry.date}</small><strong>{entry.name}</strong></span><span className="pro-journey__node" aria-hidden="true"/></button>)}
+        }}><span className="pro-journey__number">{String(index + 1).padStart(2, "0")}</span><span className="pro-journey__stop-copy"><small>{entry.date}</small><strong>{entry.name}</strong></span></button>)}
       </div>
       <article className="pro-journey__panel" id="journey-panel" role="tabpanel" aria-labelledby={`journey-tab-${active}`} key={item.name}>
         <div className="pro-journey__panel-top"><span>CHAPTER {String(active + 1).padStart(2, "0")} / 0{experience.length}</span><span className={item.incoming ? "pro-journey__status is-upcoming" : "pro-journey__status"}>{item.incoming ? "UPCOMING" : item.kind}</span></div>
