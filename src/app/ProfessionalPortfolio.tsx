@@ -15,7 +15,6 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
   const [commandOpen, setCommandOpen] = useState(false);
-  const [edition, setEdition] = useState<"morning" | "midnight">("morning");
   const [starClicks, setStarClicks] = useState(0);
   const [starNoteOpen, setStarNoteOpen] = useState(false);
   const commandTriggerRef = useRef<HTMLButtonElement>(null);
@@ -28,13 +27,6 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
     { label: "GitHub", detail: "github.com/samairaxox", href: professionalLinks.github, external: true },
     { label: "Contact", detail: "Email · LinkedIn · GitHub", href: "#contact" },
   ];
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem("portfolio-edition");
-      if (saved === "morning" || saved === "midnight") setEdition(saved);
-    } catch { /* Storage can be unavailable in private browsing. */ }
-  }, []);
 
   useEffect(() => {
     const onShortcut = (event: KeyboardEvent) => {
@@ -85,12 +77,6 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
 
   const closeMenu = () => setMenuOpen(false);
 
-  const changeEdition = () => {
-    const next = edition === "morning" ? "midnight" : "morning";
-    try { window.localStorage.setItem("portfolio-edition", next); } catch { /* Keep this session usable without storage. */ }
-    setEdition(next);
-  };
-
   const openFeetcode = () => {
     document.querySelector("#work")?.scrollIntoView({ behavior: "smooth", block: "start" });
     window.setTimeout(() => window.dispatchEvent(new Event("portfolio:open-feetcode")), 360);
@@ -101,7 +87,7 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
     window.requestAnimationFrame(() => commandTriggerRef.current?.focus());
   };
 
-  return <main className="professional-site" id="professional-top" data-edition={edition}>
+  return <main className="professional-site" id="professional-top" data-edition="midnight">
     <header className="pro-nav">
       <a className="pro-wordmark" href="#professional-top" aria-label="Samaira Sharma, home">S<span>/</span>S</a>
       <button className="pro-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="professional-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? "CLOSE" : "MENU"}<span aria-hidden="true">{menuOpen ? "−" : "+"}</span></button>
@@ -109,7 +95,6 @@ export default function ProfessionalPortfolio({ onOpenInteractive }: { onOpenInt
         <a aria-current={activeSection === "about" ? "location" : undefined} href="#about" onClick={closeMenu}>About</a><a aria-current={activeSection === "experience" ? "location" : undefined} href="#experience" onClick={closeMenu}>Experience</a><a aria-current={activeSection === "journal" ? "location" : undefined} href="#journal" onClick={closeMenu}>Journal</a><a aria-current={activeSection === "work" ? "location" : undefined} href="#work" onClick={closeMenu}>Work</a><a aria-current={activeSection === "achievements" ? "location" : undefined} href="#achievements" onClick={closeMenu}>Recognition</a><a aria-current={activeSection === "skills" ? "location" : undefined} href="#skills" onClick={closeMenu}>Skills</a><a aria-current={activeSection === "contact" ? "location" : undefined} href="#contact" onClick={closeMenu}>Contact</a>
       </nav>
       <div className="pro-nav__actions">
-        <button className="pro-edition-toggle" type="button" aria-label={`Switch to ${edition === "morning" ? "Midnight" : "Morning"} Edition`} aria-pressed={edition === "midnight"} onClick={changeEdition}><span aria-hidden="true">{edition === "morning" ? "☼" : "☾"}</span><b>{edition === "morning" ? "MORNING" : "MIDNIGHT"}</b></button>
         <button ref={commandTriggerRef} className="pro-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-haspopup="dialog" aria-expanded={commandOpen}><span>INDEX</span><kbd>⌘ K</kbd></button>
         <button className="pro-interactive-link" type="button" onClick={onOpenInteractive}>Interactive View <span aria-hidden="true">↗</span></button>
       </div>
